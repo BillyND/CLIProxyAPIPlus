@@ -11,18 +11,18 @@ const (
 	// JitterPercent is the default percentage of jitter to apply (±30%)
 	JitterPercent = 0.30
 
-	// Human-like delay ranges
-	ShortDelayMin  = 50 * time.Millisecond  // Minimum for rapid consecutive operations
-	ShortDelayMax  = 200 * time.Millisecond // Maximum for rapid consecutive operations
-	NormalDelayMin = 1 * time.Second        // Minimum for normal thinking time
-	NormalDelayMax = 3 * time.Second        // Maximum for normal thinking time
-	LongDelayMin   = 5 * time.Second        // Minimum for reading/resting
-	LongDelayMax   = 10 * time.Second       // Maximum for reading/resting
+	// Human-like delay ranges (optimized for low latency)
+	ShortDelayMin  = 10 * time.Millisecond  // Minimum for rapid consecutive operations
+	ShortDelayMax  = 50 * time.Millisecond  // Maximum for rapid consecutive operations
+	NormalDelayMin = 50 * time.Millisecond  // Minimum for normal thinking time
+	NormalDelayMax = 200 * time.Millisecond // Maximum for normal thinking time
+	LongDelayMin   = 200 * time.Millisecond // Minimum for reading/resting
+	LongDelayMax   = 500 * time.Millisecond // Maximum for reading/resting
 
 	// Probability thresholds for human-like behavior
-	ShortDelayProbability  = 0.20 // 20% chance of short delay (consecutive ops)
+	ShortDelayProbability  = 0.60 // 60% chance of short delay (consecutive ops)
 	LongDelayProbability   = 0.05 // 5% chance of long delay (reading/resting)
-	NormalDelayProbability = 0.75 // 75% chance of normal delay (thinking)
+	NormalDelayProbability = 0.35 // 35% chance of normal delay (thinking)
 )
 
 var (

@@ -10,9 +10,9 @@ const (
 	CooldownReasonSuspended   = "account_suspended"
 	CooldownReasonQuotaExhausted = "quota_exhausted"
 
-	DefaultShortCooldown = 1 * time.Minute
-	MaxShortCooldown     = 5 * time.Minute
-	LongCooldown         = 24 * time.Hour
+	DefaultShortCooldown = 10 * time.Second
+	MaxShortCooldown     = 1 * time.Minute
+	LongCooldown         = 1 * time.Hour
 )
 
 type CooldownManager struct {

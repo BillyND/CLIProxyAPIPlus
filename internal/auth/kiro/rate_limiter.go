@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	DefaultMinTokenInterval  = 1 * time.Second
-	DefaultMaxTokenInterval  = 2 * time.Second
-	DefaultDailyMaxRequests  = 500
-	DefaultJitterPercent     = 0.3
-	DefaultBackoffBase       = 30 * time.Second
-	DefaultBackoffMax        = 5 * time.Minute
+	DefaultMinTokenInterval  = 100 * time.Millisecond
+	DefaultMaxTokenInterval  = 300 * time.Millisecond
+	DefaultDailyMaxRequests  = 2000
+	DefaultJitterPercent     = 0.2
+	DefaultBackoffBase       = 5 * time.Second
+	DefaultBackoffMax        = 1 * time.Minute
 	DefaultBackoffMultiplier = 1.5
-	DefaultSuspendCooldown   = 1 * time.Hour
+	DefaultSuspendCooldown   = 10 * time.Minute
 )
 
 // TokenState Token 状态

@@ -61,11 +61,11 @@ const (
 
 	// Socket retry configuration constants
 	// Maximum number of retry attempts for socket/network errors
-	kiroSocketMaxRetries = 3
+	kiroSocketMaxRetries = 2
 	// Base delay between retry attempts (uses exponential backoff: delay * 2^attempt)
-	kiroSocketBaseRetryDelay = 1 * time.Second
+	kiroSocketBaseRetryDelay = 500 * time.Millisecond
 	// Maximum delay between retry attempts (cap for exponential backoff)
-	kiroSocketMaxRetryDelay = 30 * time.Second
+	kiroSocketMaxRetryDelay = 5 * time.Second
 	// First token timeout for streaming responses (how long to wait for first response)
 	kiroFirstTokenTimeout = 15 * time.Second
 	// Streaming read timeout (how long to wait between chunks)
