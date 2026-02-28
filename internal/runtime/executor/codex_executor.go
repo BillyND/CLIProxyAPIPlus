@@ -574,6 +574,11 @@ func (e *CodexExecutor) Refresh(ctx context.Context, auth *cliproxyauth.Auth) (*
 	svc := codexauth.NewCodexAuth(e.cfg)
 	td, err := svc.RefreshTokensWithRetry(ctx, refreshToken, 3)
 	if err != nil {
+		// Graceful degradation: if token is still valid, continue using it
+		if expiry, ok := auth.ExpirationTime(); ok && time.Now().Before(expiry) {
+			log.Warnf("codex refresh failed but token still valid until %s: %v", expiry.Format(time.RFC3339), err)
+			return auth, nil
+		}
 		return nil, err
 	}
 	if auth.Metadata == nil {

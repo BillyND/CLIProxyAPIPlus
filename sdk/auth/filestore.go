@@ -237,27 +237,30 @@ func (s *FileTokenStore) readAuthFile(path, baseDir string) (*cliproxyauth.Auth,
 		status = cliproxyauth.StatusDisabled
 	}
 
-	// Calculate NextRefreshAfter from expires_at (20 minutes before expiry)
-	var nextRefreshAfter time.Time
-	if expiresAtStr, ok := metadata["expires_at"].(string); ok && expiresAtStr != "" {
-		if expiresAt, err := time.Parse(time.RFC3339, expiresAtStr); err == nil {
-			nextRefreshAfter = expiresAt.Add(-20 * time.Minute)
-		}
+	auth := &cliproxyauth.Auth{
+		ID:              id,
+		Provider:        provider,
+		FileName:        id,
+		Label:           s.labelFor(metadata),
+		Status:          status,
+		Disabled:        disabled,
+		Attributes:      map[string]string{"path": path},
+		Metadata:        metadata,
+		CreatedAt:       info.ModTime(),
+		UpdatedAt:       info.ModTime(),
+		LastRefreshedAt: time.Time{},
 	}
 
-	auth := &cliproxyauth.Auth{
-		ID:               id,
-		Provider:         provider,
-		FileName:         id,
-		Label:            s.labelFor(metadata),
-		Status:           status,
-		Disabled:         disabled,
-		Attributes:       map[string]string{"path": path},
-		Metadata:         metadata,
-		CreatedAt:        info.ModTime(),
-		UpdatedAt:        info.ModTime(),
-		LastRefreshedAt:  time.Time{},
-		NextRefreshAfter: nextRefreshAfter,
+	// Calculate NextRefreshAfter using provider-specific expiry keys and lead time.
+	// Uses ExpirationTime() which checks all known expiry keys (expired, expires_at, etc.)
+	// and ProviderRefreshLead() for provider-specific lead times (e.g., claude=4h, codex=5d, kiro=20min).
+	if expiry, hasExpiry := auth.ExpirationTime(); hasExpiry && !expiry.IsZero() {
+		lead := cliproxyauth.ProviderRefreshLead(provider, nil)
+		if lead != nil && *lead > 0 {
+			auth.NextRefreshAfter = expiry.Add(-*lead)
+		} else {
+			auth.NextRefreshAfter = expiry.Add(-20 * time.Minute)
+		}
 	}
 	if email, ok := metadata["email"].(string); ok && email != "" {
 		auth.Attributes["email"] = email
